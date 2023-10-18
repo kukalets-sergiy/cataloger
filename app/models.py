@@ -15,7 +15,7 @@ class Author(BaseModel):
     date_of_birth = models.DateField()
     date_of_death = models.DateField(null=True, blank=True)
     country = models.CharField(max_length=100)
-    photo = models.ImageField(upload_to='authors/', null=True, blank=True)
+    photo = models.ImageField(upload_to="authors/", null=True, blank=True)
     rating = models.FloatField(default=0)
 
 
@@ -45,7 +45,7 @@ class Book(BaseModel):
     edition = models.CharField(max_length=100)
     is_published = models.BooleanField(default=False)
     rating = models.FloatField(default=0)
-    genre = models.ManyToManyField(Genre, through='AuthorGenre')
+    genre = models.ManyToManyField(Genre, through="AuthorGenre")
     publishers = models.ManyToManyField(Publisher)
 
 

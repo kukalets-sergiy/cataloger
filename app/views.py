@@ -16,7 +16,6 @@ from django.conf import settings
 
 
 class AuthorAPI(APIView):
-
     def get(self, request, author_id=None):
         if author_id is not None:
             try:
@@ -56,14 +55,13 @@ class AuthorAPI(APIView):
         try:
             author = Author.objects.get(pk=author_id)
         except ObjectDoesNotExist:
-            return Response({'message': 'Автор не існує'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"message": "Автор не існує"}, status=status.HTTP_404_NOT_FOUND)
 
         author.delete()
-        return Response({'message': 'Автор успішно видалений'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Автор успішно видалений"}, status=status.HTTP_204_NO_CONTENT)
 
 
 class BookAPI(APIView):
-
     def get(self, request, book_id=None):
         if book_id is not None:
             try:
@@ -110,7 +108,6 @@ class BookAPI(APIView):
 
 
 class PublisherAPI(APIView):
-
     def get(self, request, publisher_id=None):
         if publisher_id is not None:
             try:
@@ -157,7 +154,6 @@ class PublisherAPI(APIView):
 
 
 class GenreAPI(APIView):
-
     def get(self, request, genre_id=None):
         if genre_id is not None:
             try:
@@ -204,7 +200,6 @@ class GenreAPI(APIView):
 
 
 class AuthorGenreAPI(APIView):
-
     def get(self, request, author_id):
         author = Author.objects.get(id=author_id)
         books = Book.objects.filter(author=author)
@@ -213,57 +208,53 @@ class AuthorGenreAPI(APIView):
 
 
 class PublisherGenreAPI(APIView):
-
     def get(self, request, publisher_id):
         genres = Genre.objects.filter(publisher_id=publisher_id)
-        return Response(PublisherSerializer(genres, many='many').data)
+        return Response(PublisherSerializer(genres, many="many").data)
 
 
 class BookAuthorAPI(APIView):
-
     def get(self, request, author_id):
         books = Book.objects.filter(author_id=author_id)
-        return Response(BookSerializer(books, many='many').data)
+        return Response(BookSerializer(books, many="many").data)
 
 
 class BookPublisherAPI(APIView):
-
     def get(self, request, publisher_id):
         books = Book.objects.filter(publisher_id=publisher_id)
-        return Response(BookSerializer(books, many='many').data)
+        return Response(BookSerializer(books, many="many").data)
 
 
 class BookGenreAPI(APIView):
-
     def get(self, request, genre):
         books = Book.objects.filter(genre=genre)
-        return Response(BookSerializer(books, many='many').data)
+        return Response(BookSerializer(books, many="many").data)
 
 
 class BookYearAPI(APIView):
-
     def get(self, request, published_at):
         books = Book.objects.filter(published_at=published_at)
-        return Response(BookSerializer(books, many='many').data)
+        return Response(BookSerializer(books, many="many").data)
 
 
 class FileUploadAPI(APIView):
     def post(self, request, author_id):
-        file_obj = request.FILES['file']
+        file_obj = request.FILES["file"]
 
         if not self.validate_file_extension(file_obj.name):
-            return Response({'error': 'Unsupported file extension.'},
-                            status=status.HTTP_406_NOT_ACCEPTABLE)
+            return Response(
+                {"error": "Unsupported file extension."}, status=status.HTTP_406_NOT_ACCEPTABLE
+            )
 
-        current_date = datetime.now().strftime('%Y-%m-%d')
+        current_date = datetime.now().strftime("%Y-%m-%d")
         file_path = f"{author_id}/{current_date}/{file_obj.name}"
-        full_path_for_saving = os.path.join(settings.MEDIA_ROOT, 'images', current_date)
+        full_path_for_saving = os.path.join(settings.MEDIA_ROOT, "images", current_date)
         full_file_path = os.path.join(full_path_for_saving, file_obj.name)
         default_storage.save(full_file_path, file_obj)
 
-        response_data = {'file_path': file_path}
+        response_data = {"file_path": file_path}
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     def validate_file_extension(self, filename):
         extension = Path(filename).suffix
-        return extension in ['.png', '.img', '.svg']
+        return extension in [".png", ".img", ".svg"]
